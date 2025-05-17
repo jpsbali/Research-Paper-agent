@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 import streamlit as st
-
+import re 
 from langchain_groq import ChatGroq
 from langchain_community.tools import ArxivQueryRun
 from langchain_community.utilities import ArxivAPIWrapper
@@ -171,18 +171,16 @@ def main():
         with st.spinner("Generating paper... This may take a minute."):
             try:
                 paper_md_raw = generate_research_paper(topic, approach, results)
-
-                # Clean the output if it contains <think> tags
-                if "</think>" in paper_md_raw:
-                    paper_md = paper_md_raw.split("</think>")[-1].strip()
-                else:
-                    paper_md = paper_md_raw.strip()
-
+    
+                # Remove all <think>...</think> tags using regex
+                paper_md = re.sub(r"<think>.*?</think>", "", paper_md_raw, flags=re.DOTALL).strip()
+    
                 st.success("Research paper generated successfully!")
                 st.markdown(paper_md)
-
+    
             except Exception as e:
                 st.error(f"An error occurred: {e}")
+
 
 if __name__ == "__main__":
     main()
