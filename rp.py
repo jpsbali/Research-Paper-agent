@@ -176,7 +176,7 @@ def main():
                 paper_md = re.sub(r"<think>.*?</think>", "", paper_md_raw, flags=re.DOTALL).strip()
     
                 st.success("Research paper generated successfully!")
-                st.text(paper_md)
+                st.write(paper_md)
     
             except Exception as e:
                 st.error(f"An error occurred: {e}")
