@@ -163,9 +163,9 @@ def main():
     st.title("🧠 AI Research Paper Generator")
     st.write("Generate a full markdown research paper using LangGraph and arXiv.")
 
-    topic = st.text_input("Research Topic", "Agentic AI and RAG")
-    approach = st.text_area("Approach", "We use LangChain and LangGraph to build agentic RAG pipelines.")
-    results = st.text_area("Results", "The system works effectively in generating sectioned research outputs.")
+    topic = st.text_input("Enter Research Topic", "Agentic AI and RAG")
+    approach = st.text_area("What was the Approach you used ", "We use LangChain and LangGraph to build agentic RAG pipelines.")
+    results = st.text_area("What were your Results", "The system works effectively in generating sectioned research outputs.")
 
     if st.button("Generate Research Paper"):
         with st.spinner("Generating paper... This may take a minute."):
@@ -176,7 +176,7 @@ def main():
                 paper_md = re.sub(r"<think>.*?</think>", "", paper_md_raw, flags=re.DOTALL).strip()
     
                 st.success("Research paper generated successfully!")
-                st.markdown(paper_md)
+                st.text(paper_md)
     
             except Exception as e:
                 st.error(f"An error occurred: {e}")
