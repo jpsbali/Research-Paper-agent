@@ -226,16 +226,24 @@ def main():
                           "The system successfully generates research papers with well-structured sections and relevant references.")
     
     if st.button("Generate Research Paper"):
-        with st.spinner("Generating paper... This may take a minute."):
-            try:
-                paper_md = generate_research_paper(topic, approach, results)
-                st.success("Research paper generated successfully!")
-                
-                # Display markdown output nicely
-                st.markdown(paper_md)
-                
-            except Exception as e:
-                st.error(f"An error occurred: {e}")
+    with st.spinner("Generating paper... This may take a minute."):
+        try:
+            # Call your paper generation function
+            paper_md_raw = generate_research_paper(topic, approach, results)
+            
+            # Clean the output if it contains <think> tags
+            if "</think>" in paper_md_raw:
+                paper_md = paper_md_raw.split("</think>")[-1].strip()
+            else:
+                paper_md = paper_md_raw.strip()
+            
+            st.success("Research paper generated successfully!")
+            
+            # Display cleaned markdown output
+            st.markdown(paper_md)
+            
+        except Exception as e:
+            st.error(f"An error occurred: {e}")
 
 if __name__ == "__main__":
     main()
