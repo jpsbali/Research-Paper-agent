@@ -92,10 +92,10 @@ def arxiv_lit_review(state: WorkerState):
     lit_summary_text = "\n".join(lit_summary_parts)
     lit_review_section = llm.invoke([
         SystemMessage(content="You are an academic writer drafting a literature review section."),
-        HumanMessage(content=f"Based on the following summarized academic papers:\n\n{lit_summary_text}\n\nWrite a coherent Literature Review section. Mention authors and key findings, and identify gaps.")
+        HumanMessage(content=f"Based on the following summarized academic papers:\n\n{lit_summary_text}\n\nWrite a coherent Literature Review section. Mention authors and key findings, and identify gaps , display comparison tables between techniques , and write in paragraphs , dont give conclusion.")
     ])
     return {
-        "completed_sections": [f"## Literature Review\n\n{lit_review_section.content}"],
+        "completed_sections": [f"Literature Review\n\n{lit_review_section.content}"],
         "arxiv_results": arxiv_papers
     }
 
@@ -111,23 +111,23 @@ def llm_call(state: WorkerState):
             f"- {paper['authors']}. \"{paper['title']}\". arXiv preprint."
             for paper in state.get("arxiv_results", [])
         ]
-        return {"completed_sections": [f"## References\n\n" + "\n".join(refs)]}
+        return {"completed_sections": [f"References\n\n" + "\n".join(refs)]}
 
     prompt_map = {
-        "Abstract": f"Topic: {state['topic']}\nApproach: {state['approach']}\nResults: {state['results']}",
-        "Introduction": f"Explain the importance of the topic: {state['topic']} and objective using approach: {state['approach']}.",
-        "Methodology": f"Describe methodology for the approach: {state['approach']}.",
-        "Results": f"Explain research results: {state['results']}.",
-        "Conclusion": f"Summarize findings for topic: {state['topic']}.",
-        "Future Scope": f"Suggest future directions for: {state['topic']}.",
+        "Abstract": f"Topic: {state['topic']}\nApproach: {state['approach']}\nResults: {state['results'] in 150 words}",
+        "Introduction": f"Explain the importance of the topic: {state['topic']} and objective using approach: {state['approach'] in paragraph not points , dont add conclusion in that}.",
+        "Methodology": f"Describe methodology for the approach: {state['approach'] in different paragraph based format not points , dont add conclusion in that }.",
+        "Results": f"Explain research results: {state['results'] , add metrics tables for evaluation}.",
+        "Conclusion": f"Summarize findings for topic: {state['topic'] , dont add future directions in that , just a precise conclusion paragraph}.",
+        "Future Scope": f"Suggest 3 future directions only for: {state['topic']}.",
     }
 
     prompt = prompt_map.get(section_name, f"Write the {section_name} section for topic: {state['topic']}.")
     llm_response = llm.invoke([
-        SystemMessage(content=f"Write a markdown section titled '{section_name}'. {section_desc}"),
+        SystemMessage(content=f"Write a section titled '{section_name}'. {section_desc}"),
         HumanMessage(content=prompt)
     ])
-    return {"completed_sections": [f"## {section_name}\n\n{llm_response.content}"]}
+    return {"completed_sections": [f" {section_name}\n\n{llm_response.content}"]}
 
 def synthesizer(state: State):
     final_report = "\n\n---\n\n".join(state["completed_sections"])
@@ -161,7 +161,7 @@ def generate_research_paper(topic, approach, results):
 # === Streamlit UI ===
 def main():
     st.title("🧠 AI Research Paper Generator")
-    st.write("Generate a full markdown research paper using LangGraph and arXiv.")
+    st.write("Generate a full research paper using LangGraph and arXiv.")
 
     topic = st.text_input("Enter Research Topic", "Agentic AI and RAG")
     approach = st.text_area("What was the Approach you used ", "We use LangChain and LangGraph to build agentic RAG pipelines.")
