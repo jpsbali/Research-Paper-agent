@@ -114,13 +114,14 @@ def llm_call(state: WorkerState):
         return {"completed_sections": [f"References\n\n" + "\n".join(refs)]}
 
     prompt_map = {
-        "Abstract": f"Topic: {state['topic']}\nApproach: {state['approach']}\nResults: {state['results'] in 150 words}",
-        "Introduction": f"Explain the importance of the topic: {state['topic']} and objective using approach: {state['approach'] in paragraph not points , dont add conclusion in that}.",
-        "Methodology": f"Describe methodology for the approach: {state['approach'] in different paragraph based format not points , dont add conclusion in that }.",
-        "Results": f"Explain research results: {state['results'] , add metrics tables for evaluation}.",
-        "Conclusion": f"Summarize findings for topic: {state['topic'] , dont add future directions in that , just a precise conclusion paragraph}.",
-        "Future Scope": f"Suggest 3 future directions only for: {state['topic']}.",
+    "Abstract": f"Topic: {state['topic']}\nApproach: {state['approach']}\nResults: {state['results']} (in 150 words)",
+    "Introduction": f"Explain the importance of the topic: {state['topic']} and objective using approach: {state['approach']} (in paragraph, not points. Do not add a conclusion).",
+    "Methodology": f"Describe methodology for the approach: {state['approach']} (in paragraph-based format, not points. Do not add a conclusion).",
+    "Results": f"Explain research results: {state['results']} (add metrics tables for evaluation).",
+    "Conclusion": f"Summarize findings for topic: {state['topic']} (do not add future directions, just a precise conclusion paragraph).",
+    "Future Scope": f"Suggest 3 future directions only for: {state['topic']}.",
     }
+
 
     prompt = prompt_map.get(section_name, f"Write the {section_name} section for topic: {state['topic']}.")
     llm_response = llm.invoke([
